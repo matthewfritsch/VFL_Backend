@@ -8,7 +8,7 @@ import (
     "gorm.io/gorm"
 )
 
-func SearchPlayers(c *gin.Context, db *gorm.DB) {
+func SearchPlayers(db *gorm.DB, c *gin.Context) {
     searchQuery := c.Query("query")
     if searchQuery == "" {
         // Instead of sending an error, send an empty or a special clear message
