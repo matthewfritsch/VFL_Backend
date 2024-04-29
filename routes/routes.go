@@ -1,16 +1,24 @@
 package routes
 
 import (
+    "fantasy-valorant/auth"
     "fantasy-valorant/controllers"
+    "fantasy-valorant/utils"
     "github.com/gin-gonic/gin"
-    "gorm.io/gorm"
 )
 
-func SetupRouter(router *gin.Engine, db *gorm.DB) {
-    router.POST("/register", controllers.RegisterUser)
-    router.POST("/login", controllers.LoginUser)
+func SetupRouter(router *gin.Engine) {
+    heroku_db := utils.InitDB()
+    supa_auth := utils.InitSupa()
+
+    router.POST("/register", func(c *gin.Context) {
+        auth.Register(supa_auth, c)
+    })
+    router.POST("/signin", func(c *gin.Context) {
+        auth.SignIn(supa_auth, c)
+    })
     router.GET("/search", func(c *gin.Context) {
-        controllers.SearchPlayers(c, db)
+        controllers.SearchPlayers(heroku_db, c)
     })
     router.GET("/performance/:playerId", controllers.CalculatePlayerPerformance)
 }
