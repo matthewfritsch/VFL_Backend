@@ -10,6 +10,9 @@ import (
 func SetupRouter(router *gin.Engine) {
     heroku_db := utils.InitDB()
     supa_auth := utils.InitSupa()
+    authFunc := func(c *gin.Context) {
+        auth.AuthMiddleware(supa_auth, c)
+    }
 
     router.POST("/register", func(c *gin.Context) {
         auth.Register(supa_auth, c)
@@ -17,7 +20,7 @@ func SetupRouter(router *gin.Engine) {
     router.POST("/signin", func(c *gin.Context) {
         auth.SignIn(supa_auth, c)
     })
-    router.GET("/search", func(c *gin.Context) {
+    router.GET("/protected/search", authFunc, func(c *gin.Context) {
         controllers.SearchPlayers(heroku_db, c)
     })
     router.GET("/performance/:playerId", controllers.CalculatePlayerPerformance)
